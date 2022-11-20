@@ -12,31 +12,33 @@
 #define VECLEN 100
 
 float a[VECLEN], b[VECLEN];
+float localsum;
 
 float dotprod(float *sum)
 {
   int i, tid;
 
   tid = omp_get_thread_num();
-#pragma omp for reduction(+ \
-                          : *sum)
+  localsum = 0.0;
+  #pragma omp for reduction(+ : localsum) 
   for (i = 0; i < VECLEN; i++)
-  {
-    *sum = *sum + (a[i] * b[i]);
-    printf("  tid= %d i=%d\n", tid, i);
-  }
+    {
+      localsum = localsum + (a[i] * b[i]);
+      printf("  tid= %d i=%d\n", tid, i);
+    }
+  *sum = *sum + localsum;
+  return localsum;
 }
 
 int main(int argc, char *argv[])
 {
   int i;
   float sum;
-
+  
   for (i = 0; i < VECLEN; i++)
     a[i] = b[i] = 1.0 * i;
   sum = 0.0;
 
-#pragma omp parallel shared(sum)
   dotprod(&sum);
 
   printf("Sum = %f\n", sum);

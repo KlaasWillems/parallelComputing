@@ -15,7 +15,7 @@ int nthreads, i, tid;
 float total;
 
 /*** Spawn parallel region ***/
-#pragma omp parallel 
+#pragma omp parallel private(i, tid) reduction(+: total) num_threads(nthreads)
   {
   /* Obtain thread number */
   tid = omp_get_thread_num();
@@ -29,7 +29,6 @@ float total;
   #pragma omp barrier
 
   /* do some work */
-  #pragma omp parallel private(i) reduction(+: total) num_threads(nthreads)
   total = 0.0;
   for (i=0; i<1000000; i++) 
      total = total + i;

@@ -30,7 +30,7 @@ for (i=0; i<N; i++) {
   }
 
 /* Fork a team of threads giving them their own copies of variables */
-#pragma omp parallel shared(a, b, nthreads, locka, lockb) private(tid, i)
+#pragma omp parallel shared(a, b, nthreads, locka, lockb) private(tid, i) num_threads(2)
   {
 
   /* Obtain thread number and number of threads */
@@ -51,12 +51,12 @@ for (i=0; i<N; i++) {
       printf("Thread %d updating a[]\n",tid);
       for (i=0; i<N; i++)
         a[i] += DELTA * i;
+      omp_unset_lock(&locka);
       omp_set_lock(&lockb);
       printf("Thread %d updating b[]\n",tid);
       for (i=0; i<N; i++)
         b[i] += DELTA + i;
       omp_unset_lock(&lockb);
-      omp_unset_lock(&locka);
       }
 
     #pragma omp section
@@ -65,12 +65,12 @@ for (i=0; i<N; i++) {
       printf("Thread %d updating b[]\n",tid);
       for (i=0; i<N; i++)
         b[i] += PI * i;
+      omp_unset_lock(&lockb);
       omp_set_lock(&locka);
       printf("Thread %d adding b[] to a[]\n",tid);
       for (i=0; i<N; i++)
         a[i] += PI + i;
       omp_unset_lock(&locka);
-      omp_unset_lock(&lockb);
       }
 
     }  /* end of sections */
