@@ -30,6 +30,7 @@ if (rank == 0) {
 
   start = MPI_Wtime();
   while (1) {
+    MPI_Barrier(MPI_COMM_WORLD);
     MPI_Send(data, MSGSIZE, MPI_BYTE, dest, tag, MPI_COMM_WORLD);
     count++;
     if (count % 10 == 0) {
@@ -44,9 +45,10 @@ if (rank == 0) {
 
 if (rank == 1) {
   while (1) {	
+    MPI_Barrier(MPI_COMM_WORLD);
     MPI_Recv(data, MSGSIZE, MPI_BYTE, source, tag, MPI_COMM_WORLD, &status);
     /* Do some work  - at least more than the send task */
-    result = 0.0;
+    result = 0.0; // work will pile up without the barrier...
     for (i=0; i < 1000000; i++) 
       result = result + (double)random();
     }

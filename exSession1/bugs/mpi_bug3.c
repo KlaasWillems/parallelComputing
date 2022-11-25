@@ -15,6 +15,7 @@ float update(int myoffset, int chunk, int myid);
 MPI_Status status;
 
 /***** Initializations *****/
+MPI_Init(&argc,&argv); // don't forget MPI_INIT and MPI_Finalize()
 MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
 if (numtasks % 4 != 0) {
    printf("Quitting. Number of MPI tasks must be divisible by 4.\n");
@@ -25,7 +26,7 @@ MPI_Comm_rank(MPI_COMM_WORLD,&taskid);
 printf ("MPI task %d has started...\n", taskid);
 chunksize = (ARRAYSIZE / numtasks);
 tag2 = 1;
-tag1 = 2;
+tag1 = 2; //offset
 
 /***** Master task only ******/
 if (taskid == MASTER){
@@ -96,7 +97,7 @@ if (taskid > MASTER) {
 
   } /* end of non-master */
 
-
+MPI_Finalize();
 
 }   /* end of main */
 

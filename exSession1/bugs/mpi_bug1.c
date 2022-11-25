@@ -21,7 +21,7 @@ if (rank == 0) {
   tag = rank;
   rc = MPI_Send(&outmsg, 1, MPI_CHAR, dest, tag, MPI_COMM_WORLD);
   printf("Sent to task %d...\n",dest);
-  rc = MPI_Recv(&inmsg, 1, MPI_CHAR, source, tag, MPI_COMM_WORLD, &Stat);
+  rc = MPI_Recv(&inmsg, 1, MPI_CHAR, source, MPI_ANY_TAG, MPI_COMM_WORLD, &Stat);
   printf("Received from task %d...\n",source);
   }
 
@@ -29,7 +29,7 @@ else if (rank == 1) {
   dest = rank - 1;
   source = dest;
   tag = rank;
-  rc = MPI_Recv(&inmsg, 1, MPI_CHAR, source, tag, MPI_COMM_WORLD, &Stat);
+  rc = MPI_Recv(&inmsg, 1, MPI_CHAR, source, 0, MPI_COMM_WORLD, &Stat);
   printf("Received from task %d...\n",source);
   rc = MPI_Send(&outmsg, 1, MPI_CHAR, dest, tag, MPI_COMM_WORLD);
   printf("Sent to task %d...\n",dest);
@@ -40,6 +40,6 @@ if (rank < 2) {
   printf("Task %d: Received %d char(s) from task %d with tag %d \n",
          rank, count, Stat.MPI_SOURCE, Stat.MPI_TAG);
   }
-
+// tags in messages must be the same. Alternatively we can use MPI_ANY_TAG.
 MPI_Finalize();
 }

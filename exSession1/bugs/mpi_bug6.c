@@ -91,7 +91,8 @@ if (rank > 1) {
   }
 
 /* Wait for all non-blocking operations to complete and record time */
-MPI_Waitall(nreqs, reqs, stats);
+if (rank != 2) // 2 is blocking, so no need to wait for it 
+	MPI_Waitall(nreqs, reqs, stats);
 T2 = MPI_Wtime();     /* end time */
 MPI_Barrier(COMM);
 
