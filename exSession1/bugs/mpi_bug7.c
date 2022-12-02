@@ -14,7 +14,7 @@ MPI_Get_processor_name(hostname, &len);
 
 printf ("Task %d on %s starting...\n", taskid, hostname);
 buffer = 23;
-root = 0;
+root = 1;
 count = taskid;
 if (taskid == root)
    printf("Root: Number of MPI tasks is: %d\n",numtasks);

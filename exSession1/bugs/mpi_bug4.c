@@ -59,6 +59,7 @@ if (taskid == MASTER){
     MPI_Recv(&data[offset], chunksize, MPI_FLOAT, source, tag2,
       MPI_COMM_WORLD, &status);
     }
+  MPI_Reduce(&mysum, &sum, 1, MPI_FLOAT, MPI_SUM, MASTER, MPI_COMM_WORLD);
 
   /* Get final sum and print sample results */  
   printf("Sample results: \n");
