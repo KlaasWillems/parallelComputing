@@ -12,26 +12,32 @@ namespace ublas = boost::numeric::ublas;
 void fullTimesDiagonal(ublas::matrix<double> &left, ublas::matrix<double> &right, ublas::matrix<double> &result)
 {
     size_t N = result.size1();
-    for (size_t i = 0; i < N; ++i)
+    int numThreads = 4;
+    #pragma omp parallel shared(left, right, result, N) num_threads(numThreads)
     {
-        for (size_t j = 0; j < N; ++j)
+        #pragma omp for
+        for (size_t i = 0; i < N; ++i)
         {
-            result(i, j) = left(i, j) * right(j, j);
+            for (size_t j = 0; j < N; ++j)
+            {
+                result(i, j) = left(i, j) * right(j, j);
+            }
         }
     }
 }
 
-void fullTimesFull(ublas::matrix<double> &left, ublas::matrix<double> &right, ublas::matrix<double> &result, int numThreads = 2)
+// Lots of false sharing if j-loop if parallized --> slow!
+void fullTimesFull(ublas::matrix<double> &left, ublas::matrix<double> &right, ublas::matrix<double> &result)
 {
     size_t N = result.size1();
-    size_t i, j, k;
-    #pragma omp parallel shared(left, right, result, N) private(i, j, k) num_threads(numThreads)
+    int numThreads = 4;
+    #pragma omp parallel shared(left, right, result, N) num_threads(numThreads)
     {
         #pragma omp for
-        for (i = 0; i < N; ++i) {
-            for (j = 0; j < N; ++j) {
+        for (size_t i = 0; i < N; ++i) {
+            for (size_t j = 0; j < N; ++j) {
                 result(i, j) = 0.0;
-                for (k = 0; k < N; ++k) {
+                for (size_t k = 0; k < N; ++k) {
                     result(i, j) += left(i, k) * right(k, j);
                 }
             }
@@ -49,7 +55,7 @@ void fullTimesFullBlocked(ublas::matrix<double> &left, ublas::matrix<double> &ri
         {
             for (size_t i_block = 0; i_block < blocksize; ++i_block)
             {
-                for (size_t j_block = 0; j_block < blocksize; ++j_block)
+                for (size_t j_block = 0; j_block < blocksize; ++j_block) // set blocks to zero
                 {
                     result(i * blocksize + i_block, j * blocksize + j_block) = 0.0;
                 }
@@ -73,15 +79,20 @@ void fullTimesFullBlocked(ublas::matrix<double> &left, ublas::matrix<double> &ri
 
 void triangularTimesFull(ublas::matrix<double> &left, ublas::matrix<double> &right, ublas::matrix<double> &result)
 {
-    size_t N = result.size1();
-    for (size_t i = 0; i < N; ++i)
+    int numThreads = 4;
+    #pragma omp parallel shared(left, right, result) num_threads(numThreads)
     {
-        for (size_t j = 0; j < N; ++j)
+        size_t N = result.size1();
+        #pragma omp for
+        for (size_t i = 0; i < N; ++i)
         {
-            result(i, j) = 0.0;
-            for (size_t k = i; k < N; ++k)
+            for (size_t j = 0; j < N; ++j)
             {
-                result(i, j) += left(i, k) * right(k, j);
+                result(i, j) = 0.0;
+                for (size_t k = i; k < N; ++k)
+                {
+                    result(i, j) += left(i, k) * right(k, j);
+                }
             }
         }
     }
