@@ -12,16 +12,10 @@ cpp_main_parallel: cpp_main.o cpp_matrixops_parallel.o
 	$(FC) -o cpp_main_parallel cpp_main.o cpp_matrixops_parallel.o -fopenmp
 
 cpp_matrixops_parallel.o: cpp_matrixops_parallel.cpp
-	$(FC) $(FFLAGS) -c cpp_matrixops_parallel.cpp
-
-cpp_matrixops_parallel: cpp_matrixops_parallel.o
-	$(FC) -o cpp_matrixops_parallel cpp_matrixops_parallel.o -fopenmp
+	$(FC) $(FFLAGS) -c cpp_matrixops_parallel.cpp 
 
 cpp_matrixops_serial.o: cpp_matrixops_serial.cpp
 	$(FC) $(FFLAGS) -c cpp_matrixops_serial.cpp
-
-cpp_matrixops_serial: cpp_matrixops_serial.o
-	$(FC) -o cpp_matrixops_serial cpp_matrixops_serial.o -fopenmp
 
 clean:
 	@ rm -f *.o *.mod $(r)

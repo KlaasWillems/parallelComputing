@@ -44,6 +44,8 @@ void testMatrixMethod(ublas::matrix<double> left, ublas::matrix<double> right, v
     auto end = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed_seconds = end - start;
 
+    //std::cout << matrixProductUser << std::endl;
+    //std::cout << matrixProductBlas << std::endl;
     std::cout << "Ran test for " << functionName << ", time taken (ms): " << elapsed_seconds.count() * 1000 / iters << ", error: " << ublas::norm_frobenius(matrixProductBlas - matrixProductUser) / ublas::norm_frobenius(matrixProductBlas) << std::endl;
 }
 

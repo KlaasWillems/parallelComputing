@@ -31,20 +31,22 @@ void fullTimesFull(ublas::matrix<double> &left, ublas::matrix<double> &right, ub
 {
     size_t N = result.size1();
     int numThreads = 4; 
-    auto sum = 0.0;
     #pragma omp parallel shared(left, right, result, N) num_threads(numThreads)
     {
         for (size_t i = 0; i < N; ++i) {
             for (size_t j = 0; j < N; ++j) {
-                // result(i, j) = 0.0;
-                #pragma omp barrier
-                sum = 0.0;
+                result(i, j) = 0.0;
+                double sum = 0.0;
                 // #pragma omp parallel for shared(left, right, result, N) num_threads(numThreads) reduction(+: sum)
-                #pragma omp for reduction(+: sum)
+                
+                #pragma omp for
                 for (size_t k = 0; k < N; ++k) {
                     sum += left(i, k) * right(k, j);
                 }
-                result(i, j) = sum;
+                #pragma omp critical 
+                {
+                    result(i, j) += sum;
+                }
             }
         }
     }
