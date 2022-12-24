@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
     {
         rightDiagonal(i, i) = distribution(generator);
     }
-    //testMatrixMethod(left, rightDiagonal, fullTimesDiagonal, "fullTimesDiagonal");
+    testMatrixMethod(left, rightDiagonal, fullTimesDiagonal, "fullTimesDiagonal");
 
     ublas::matrix<double> rightFull(N, N);
     for (size_t i = 0; i < N; ++i)
@@ -86,8 +86,8 @@ int main(int argc, char *argv[])
             rightFull(i, j) = distribution(generator);
         }
     }
-    testMatrixMethod(left, rightFull, fullTimesFull, "fullTimesFull");
-    //testMatrixMethod(left, rightFull, fullTimesFullBlocked, "fullTimesFullBlocked");
+    //testMatrixMethod(left, rightFull, fullTimesFull, "fullTimesFull");
+    // testMatrixMethod(left, rightFull, fullTimesFullBlocked, "fullTimesFullBlocked");
 
     ublas::triangular_matrix<double, ublas::upper> leftTriangular(N, N);
     for (size_t i = 0; i < N; ++i)

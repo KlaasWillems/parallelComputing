@@ -1,6 +1,6 @@
 FC=g++
-FFLAGS = -std=c++17 -DNDEBUG -DBOOST_UBLAS_NDEBUG -O3 -fopenmp
-# FFLAGS = -std=c++17 -Wall -Werror -pedantic -fopenmp
+FFLAGS = -std=c++17 -DNDEBUG -DBOOST_UBLAS_NDEBUG -O3 -fopenmp # For performance
+# FFLAGS = -std=c++17 -Wall -Werror -pedantic -fopenmp # For debugging 
 
 cpp_main.o: cpp_main.cpp
 	$(FC) $(FFLAGS) -c cpp_main.cpp
