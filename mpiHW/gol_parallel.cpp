@@ -12,6 +12,7 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include <ctime>
 #include <tuple>
+#include <mpi.h>
 
 
 namespace ublas = boost::numeric::ublas;
