@@ -52,6 +52,58 @@ void fullTimesFull(ublas::matrix<double> &left, ublas::matrix<double> &right, ub
     }
 }
 
+// void fullTimesFullBlocked(ublas::matrix<double> &left, ublas::matrix<double> &right, ublas::matrix<double> &result)
+// {
+//     size_t const blocksize = 50;
+//     size_t N = result.size1();
+//     int numThreads = 4; 
+    
+//     #pragma omp parallel shared(left, right, result, N) num_threads(numThreads)
+//     {
+//         ublas::matrix<double> temp(blocksize, blocksize);
+//         for (size_t i = 0; i < N / blocksize; ++i)
+//         {
+//             for (size_t j = 0; j < N / blocksize; ++j)
+//             {
+//                 for (size_t i_block = 0; i_block < blocksize; ++i_block)
+//                 {
+//                     for (size_t j_block = 0; j_block < blocksize; ++j_block)
+//                     {
+//                         result(i * blocksize + i_block, j * blocksize + j_block) = 0.0;
+//                         temp(i_block, j_block) = 0.0;
+//                     }
+//                 }
+
+//                 #pragma omp for
+//                 for (size_t k = 0; k < N / blocksize; ++k)
+//                 {
+//                     for (size_t i_block = 0; i_block < blocksize; ++i_block)
+//                     {
+//                         for (size_t j_block = 0; j_block < blocksize; ++j_block)
+//                         {
+//                             for (size_t k_block = 0; k_block < blocksize; ++k_block)
+//                             {
+//                                 temp(i_block, j_block) += left(i * blocksize + i_block, k * blocksize + k_block) * right(k * blocksize + k_block, j * blocksize + j_block);
+//                             }
+//                         }
+//                     }
+//                 }
+//                 #pragma omp critical 
+//                 {
+//                     for (size_t i_block = 0; i_block < blocksize; ++i_block)
+//                     {
+//                         for (size_t j_block = 0; j_block < blocksize; ++j_block)
+//                         {
+//                             result(i * blocksize + i_block, j * blocksize + j_block) += temp(i_block, j_block);
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//     }
+// }
+
+
 void fullTimesFullBlocked(ublas::matrix<double> &left, ublas::matrix<double> &right, ublas::matrix<double> &result)
 {
     size_t const blocksize = 50;
@@ -87,7 +139,6 @@ void fullTimesFullBlocked(ublas::matrix<double> &left, ublas::matrix<double> &ri
             }
         }
     }
-
 }
 
 void triangularTimesFull(ublas::matrix<double> &left, ublas::matrix<double> &right, ublas::matrix<double> &result)
@@ -96,7 +147,7 @@ void triangularTimesFull(ublas::matrix<double> &left, ublas::matrix<double> &rig
     #pragma omp parallel shared(left, right, result) num_threads(numThreads)
     {
         size_t N = result.size1();
-        #pragma omp for
+        #pragma omp for schedule(dynamic)
         for (size_t i = 0; i < N; ++i)
         {
             for (size_t j = 0; j < N; ++j)
