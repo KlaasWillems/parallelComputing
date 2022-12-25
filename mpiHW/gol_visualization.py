@@ -15,6 +15,7 @@ data_str = main_file.readline()
 main_file.close()
 
 #Iterate through files and visualize
+plt.figure()
 for iteration in range(0, iter_end+1, iter_step):
     board = np.zeros((x_dim, y_dim), dtype=bool)
     for process in range(processes):
@@ -33,8 +34,9 @@ for iteration in range(0, iter_end+1, iter_step):
             board[x_min:x_max+1, y_min:y_max+1] = part_board
         part_file.close()
     #Visualize
-    plt.figure()
     plt.pcolor(board)
+    plt.axis('square')
     plt.title("Iteration=" + str(iteration))
-    plt.show(block=False)
+    #plt.show()
+    plt.show(block=False)	
     plt.pause(0.5)
