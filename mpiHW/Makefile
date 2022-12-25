@@ -1,11 +1,20 @@
-FCSerial=g++
-FCParallel = mpiicpc # load module intel!
-FFLAGS = -std=c++1z -Wall -Werror -pedantic -DNDEBUG -DBOOST_UBLAS_NDEBUG -O3
+# VSC commands:
+# 	module load intel
+# 	module load Boost/1.70.0-intel-2018a
 
+# To run on VSC:
+# 	mpirun -np 4 ./gol_parallel
 
-# g++ -o gol -O3 -DNDEBUG -DBOOST UBLAS NDEBUG -std=c++1z gol.cpp
-gol_serial: gol_serial.cpp
-	$(FCSerial) -o gol_serial $(FFLAGS) gol_serial.cpp
+FCSerial = icpc
+FCParallel = mpiicpc 
+FFLAGS = -Wall -Werror -pedantic -std=c++17
+# FFLAGS = -std=c++17 -DNDEBUG -DBOOST_UBLAS_NDEBUG -O3
+
+gol_serial: gol_serial.o
+	$(FCSerial) -o gol_serial gol_serial.o 
+
+gol_serial.o: gol_serial.cpp
+	$(FCSerial) $(FFLAGS) -c gol_serial.cpp
 
 gol_parallel: gol_parallel.cpp
 	$(FCParallel) -o gol_parallel $(FFLAGS) gol_parallel.cpp
